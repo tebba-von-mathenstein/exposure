@@ -1,0 +1,4 @@
+config.py
+*.pyc
+output/
+.python-version
