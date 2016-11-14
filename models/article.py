@@ -19,6 +19,8 @@ Description: {description}
         self.publish_date = publish_date
         self.full_text = full_text
 
+        self.shares = []
+
     def __str__(self):
         return Article.article_format_str.format(
             author = self.author,
@@ -28,3 +30,6 @@ Description: {description}
             publish_date = self.publish_date,
             full_text = self.full_text,
         )
+
+    def add_share(self, article_share):
+        self.shares.append(article_share)
