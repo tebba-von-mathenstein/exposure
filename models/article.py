@@ -1,16 +1,15 @@
 class Article:
     """Articles are a single source of news information"""
 
+    # Hate this formatting for print... just sayin
     article_format_str = """
-    =====================
-    Author: {author}
-    Date: {publish_date}
-    Source: {source}
-    Title: {title}
-    Description: {description}
-
-    {full_text}
-    """
+=====================
+Author: {author}
+Date: {publish_date}
+Source: {source}
+Title: {title}
+Description: {description}
+"""
 
     def __init__(self, author, title, source, description, publish_date, full_text):
         self.author = author
