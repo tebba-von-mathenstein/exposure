@@ -4,6 +4,7 @@ from models.article_share import ArticleShare
 
 import requests
 
+
 def fetch_news_api_sources():
     url = "https://newsapi.org/v1/sources?apiKey={0}".format(NEWS_API_KEY)
     data = requests.get(url, headers = {'User-agent': 'Exposure Bot 0.0.1'}).json()

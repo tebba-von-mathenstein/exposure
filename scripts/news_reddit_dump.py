@@ -1,4 +1,4 @@
-from scripts.utility_belt import *
+from scripts.utility_belt import fetch_news_api_sources, poll_news_api, find_reddit_shares
 
 import pickle
 import re
