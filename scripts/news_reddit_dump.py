@@ -38,7 +38,7 @@ def restore_dump(file_path):
 def articles_to_string(articles):
     regex = r"http://www\.reddit\.com/r/(.*?)/.*"
 
-    articles = sorted(articles, key = lambda a: -1 * a.avg_share_score())
+    articles = sorted(articles, key=lambda a: -1 * a.avg_share_score())
     str_builder = ""
 
     for article in articles:
@@ -46,7 +46,10 @@ def articles_to_string(articles):
             str_builder += "\n" + str(article)
 
             for share in article.shares:
-                str_builder += "\n  {0} : {1}".format(re.search(regex, share.share_url).group(1), str(share.share_rating))
+                str_builder += "\n  {0} : {1}".format(
+                    re.search(regex, share.share_url).group(1),
+                    str(share.share_rating)
+                )
 
     return str_builder
 
