@@ -4,6 +4,7 @@ import pickle
 import re
 import sys
 
+
 def fetch_and_pickle(file_path):
     all_articles = []
 
@@ -21,10 +22,11 @@ def fetch_and_pickle(file_path):
                 a.add_share(s)
                 print "  " + str(s)
 
-        # Overwrite the latest dump after each news source.
-        # Might become slow later...
-        f = open(file_path, 'w')
-        pickle.dump(all_articles, f)
+    # Overwrite the latest dump after each news source.
+    # Might become slow later...
+    f = open(file_path, 'w')
+    pickle.dump(all_articles, f)
+    f.close()
 
 
 def restore_dump(file_path):
@@ -47,6 +49,7 @@ def articles_to_string(articles):
                 str_builder += "\n  {0} : {1}".format(re.search(regex, share.share_url).group(1), str(share.share_rating))
 
     return str_builder
+
 
 def dump_string(file_path):
     articles = restore_dump(file_path)
