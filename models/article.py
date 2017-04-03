@@ -28,8 +28,14 @@ Description: {description}
             source = self.source,
             description = self.description,
             publish_date = self.publish_date,
-            full_text = self.full_text,
-        )
+            full_text = self.full_text)
+
+    def avg_share_score(self):
+        if not self.shares:
+            return 0
+
+        rating_sum = sum(share.share_rating for share in self.shares)
+        return rating_sum / len(self.shares)
 
     def add_share(self, article_share):
         self.shares.append(article_share)

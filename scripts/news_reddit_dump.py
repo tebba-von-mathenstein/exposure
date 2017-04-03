@@ -1,6 +1,8 @@
 from scripts.utility_belt import *
-import re
+
 import pickle
+import re
+import sys
 
 def fetch_and_pickle(file_path):
     all_articles = []
@@ -31,16 +33,25 @@ def restore_dump(file_path):
     return articles
 
 
-def pprint_articles(articles):
+def articles_to_string(articles):
     regex = r"http://www\.reddit\.com/r/(.*?)/.*"
+
+    articles = sorted(articles, key = lambda a: -1 * a.avg_share_score())
+    str_builder = ""
 
     for article in articles:
         if article.shares:
-            print str(article)
+            str_builder += "\n" + str(article)
 
             for share in article.shares:
-                print "  {0} : {1}".format(re.search(regex, share.share_url).group(1), str(share.share_rating))
+                str_builder += "\n  {0} : {1}".format(re.search(regex, share.share_url).group(1), str(share.share_rating))
 
-def print_latest_dump():
-    articles = restore_dump('output/last_dump')
-    pprint_articles(articles)
+    return str_builder
+
+def dump_string(file_path):
+    articles = restore_dump(file_path)
+    return articles_to_string(articles)
+
+
+if __name__ == "__main__":
+    fetch_and_pickle(sys.argv[1])
