@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from exposure.scripts.utility_belt import fetch_news_api_sources, poll_news_api, find_reddit_shares
 from exposure.adapters import aljazeera
+from exposure.adapters import time
 
 # ARE YOU EVEN SERIOUS TYLER, FILE WIDE DATABASE CONNECTION?
 # Yes. So serious. #TODO: something better.
@@ -33,25 +34,27 @@ def fetch_and_save():
     mongo_collection.insert_many(storage_articles)
 
 
-def add_aljazeera_article_text():
-    '''
-    Query mongodb for all the articles hosted on www.aljazeera.com/ and apply the specific
-    scraping adapter to fetch and store the full text of the document.
-    '''
-    alj_articles = mongo_collection.find({'source': {'$regex': '.*www.aljazeera.com/.*'}})
-    for a in alj_articles:
-        if not a.get('full_text'):
-            try:
-                text = aljazeera.fetch_and_extract_article_body(a['source'])
-                mongo_collection.update_one({'_id': a['_id']}, {
-                    '$set': {
-                        'full_text': text
-                    }
-                })
-            except Exception as e:
-                print 'Warning, failure for document {}: {}'.format(a, e)
+def add_full_text():
+    scrapper_map = {
+        r'.*aljazeera.com/.*': aljazeera,
+        r'.*time.com/.*': time
+    }
+
+    for regex, scrapper in scrapper_map.iteritems():
+        alj_articles = mongo_collection.find({'source': {'$regex': regex}})
+        for a in alj_articles:
+            if not a.get('full_text'):
+                try:
+                    text = scrapper.fetch_and_extract_article_body(a['source'])
+                    mongo_collection.update_one({'_id': a['_id']}, {
+                        '$set': {
+                            'full_text': text
+                        }
+                    })
+                except Exception as e:
+                    print 'Warning, failure for document {}: {}'.format(a, e)
 
 
 if __name__ == "__main__":
-    fetch_and_save()
-    add_aljazeera_article_text()
+    # fetch_and_save()
+    # add_full_text()
