@@ -4,7 +4,7 @@ import requests
 
 def fetch_and_extract_article_body(url):
     '''
-        Provided with a url to a news article on www.time.com extract and return the
+        Provided with a url to a news article on www.nytimes.com extract and return the
         article's text body
     '''
     page_html = _fetch_page_html(url)
