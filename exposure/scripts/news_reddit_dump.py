@@ -6,13 +6,6 @@ from exposure.adapters import aljazeera
 from exposure.adapters import time
 from exposure.adapters import nytimes
 
-# ARE YOU EVEN SERIOUS TYLER, FILE WIDE DATABASE CONNECTION?
-# Yes. So serious. #TODO: something better.
-client = MongoClient()
-mongo_db = client['exposure']
-mongo_collection = mongo_db['articles']
-
-
 def fetch_and_save():
     '''
     First, ask NewsAPI for all of it's current sources, then for each source
@@ -20,6 +13,10 @@ def fetch_and_save():
     individual articles query reddit for the subreddits on which the article
     has been shared. Finally, persist ALL the article information into mongodb
     '''
+    client = MongoClient()
+    mongo_db = client['exposure']
+    mongo_collection = mongo_db['articles']
+
     all_articles = []
 
     sources = fetch_news_api_sources()
@@ -35,9 +32,14 @@ def fetch_and_save():
 
     storage_articles = [a.to_mongo() for a in all_articles]
     mongo_collection.insert_many(storage_articles)
+    client.close()
 
 
 def add_full_text():
+    client = MongoClient()
+    mongo_db = client['exposure']
+    mongo_collection = mongo_db['articles']
+
     scrapper_map = {
         r'.*aljazeera.com/.*': aljazeera,
         r'.*time.com/.*': time,
@@ -57,8 +59,9 @@ def add_full_text():
                     })
                 except Exception as e:
                     print 'Warning, failure for document {}: {}'.format(a, e)
+    client.close()
 
 
 if __name__ == "__main__":
-    # fetch_and_save()
+    fetch_and_save()
     add_full_text()
