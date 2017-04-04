@@ -1,6 +1,6 @@
-from config import NEWS_API_KEY
-from models.article import Article
-from models.article_share import ArticleShare
+from exposure.config import NEWS_API_KEY
+from exposure.models.article import Article
+from exposure.models.article_share import ArticleShare
 
 import requests
 

@@ -1,6 +1,6 @@
 from pymongo import MongoClient
-from scripts.utility_belt import fetch_news_api_sources, poll_news_api, find_reddit_shares
-from adapters import aljazeera
+from exposure.scripts.utility_belt import fetch_news_api_sources, poll_news_api, find_reddit_shares
+from exposure.adapters import aljazeera
 
 # ARE YOU EVEN SERIOUS TYLER, FILE WIDE DATABASE CONNECTION?
 # Yes. So serious.
@@ -41,5 +41,5 @@ def add_aljazeera_article_text():
 
 
 if __name__ == "__main__":
-    # fetch_and_save()
+    fetch_and_save()
     add_aljazeera_article_text()

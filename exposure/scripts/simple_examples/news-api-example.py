@@ -1,5 +1,5 @@
-from config import NEWS_API_KEY
-from models.article import Article
+from exposure.config import NEWS_API_KEY
+from exposure.models.article import Article
 import requests
 
 # techcruch is one of many sources

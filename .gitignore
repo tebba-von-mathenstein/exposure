@@ -1,4 +1,4 @@
-config.py
+exposure/config.py
 *.pyc
 output/
 .python-version
