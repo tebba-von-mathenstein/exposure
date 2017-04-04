@@ -39,3 +39,10 @@ Description: {description}
 
     def add_share(self, article_share):
         self.shares.append(article_share)
+
+    def to_mongo(self):
+        d = self.__dict__
+        mongo_shares = [share.to_mongo() for share in self.shares]
+        d['shares'] = mongo_shares
+
+        return d

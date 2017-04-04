@@ -60,7 +60,7 @@ def find_reddit_shares(article):
         share_url = "http://www.reddit.com{0}".format(permalink)
         share_score = p['score']
 
-        share = ArticleShare(None, share_url, share_score)
+        share = ArticleShare(share_url, share_score)
         article_shares.append(share)
 
     return article_shares
