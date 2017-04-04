@@ -1,7 +1,10 @@
 from pymongo import MongoClient
 from exposure.scripts.utility_belt import fetch_news_api_sources, poll_news_api, find_reddit_shares
+
+# TODO: this is going to get out of hand... we need to think of a better strategy
 from exposure.adapters import aljazeera
 from exposure.adapters import time
+from exposure.adapters import nytimes
 
 # ARE YOU EVEN SERIOUS TYLER, FILE WIDE DATABASE CONNECTION?
 # Yes. So serious. #TODO: something better.
@@ -37,7 +40,8 @@ def fetch_and_save():
 def add_full_text():
     scrapper_map = {
         r'.*aljazeera.com/.*': aljazeera,
-        r'.*time.com/.*': time
+        r'.*time.com/.*': time,
+        r'.*nytimes.com/.*': nytimes
     }
 
     for regex, scrapper in scrapper_map.iteritems():
@@ -57,4 +61,4 @@ def add_full_text():
 
 if __name__ == "__main__":
     # fetch_and_save()
-    # add_full_text()
+    add_full_text()
