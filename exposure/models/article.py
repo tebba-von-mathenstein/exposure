@@ -1,7 +1,7 @@
 class Article:
     """Articles are a single source of news information"""
 
-    # Hate this formatting for print... just sayin
+    # TODO: I Hate this formatting for __str__, is there a better way?
     article_format_str = """
 =====================
 Author: {author}
@@ -31,6 +31,9 @@ Description: {description}
             full_text = self.full_text)
 
     def avg_share_score(self):
+        '''
+            Compute and return the average of the scores for social media shares.
+        '''
         if not self.shares:
             return 0
 
@@ -41,6 +44,9 @@ Description: {description}
         self.shares.append(article_share)
 
     def to_mongo(self):
+        '''
+            Serialize the article to a dictionary format that plays nicely with MongoDB
+        '''
         d = self.__dict__
         mongo_shares = [share.to_mongo() for share in self.shares]
         d['shares'] = mongo_shares

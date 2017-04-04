@@ -6,6 +6,10 @@ import requests
 
 
 def fetch_news_api_sources():
+    '''
+        Using NewsAPI fetch their current source list from the provided endpoint.
+        return a list of strings with the names of the news sources.
+    '''
     url = "https://newsapi.org/v1/sources?apiKey={0}".format(NEWS_API_KEY)
     data = requests.get(url, headers={'User-agent': 'Exposure Bot 0.0.1'}).json()
     sources = [source['id'] for source in data['sources']]
@@ -14,6 +18,13 @@ def fetch_news_api_sources():
 
 
 def poll_news_api(source, sort_by):
+    '''
+        Given a valid NewsAPI news source (source) and a valid NewsAPI sort_by parameter, fetch
+        the first n news articles sorted by that parameter (where n is whatever the current default
+        number of returned values for NewsAPI is).
+
+        return a list of exposure.model.Articles
+    '''
     articles = []
     url = "https://newsapi.org/v1/articles?source={0}&sortBy={1}&apiKey={2}".format(source, sort_by, NEWS_API_KEY)
     data = requests.get(url, headers={'User-agent': 'Exposure Bot 0.0.1'}).json()
@@ -45,6 +56,11 @@ def poll_news_api(source, sort_by):
 
 
 def find_reddit_shares(article):
+    '''
+    Given an exposure.models.Article query reddit for it's 'source' field, which is a URL. Create
+    ArticleShare objects for each instance of a share of this article on a subreddit return a list
+    of these ArticleShares.
+    '''
     article_shares = []
 
     url = "http://www.reddit.com/search.json?q={0}".format(article.source)

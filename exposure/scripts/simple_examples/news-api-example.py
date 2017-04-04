@@ -1,3 +1,6 @@
+'''
+An example of how to fetch and print all the recent techcruch articles from NewsAPI
+'''
 from exposure.config import NEWS_API_KEY
 from exposure.models.article import Article
 import requests

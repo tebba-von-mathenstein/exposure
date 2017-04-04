@@ -3,13 +3,19 @@ from exposure.scripts.utility_belt import fetch_news_api_sources, poll_news_api,
 from exposure.adapters import aljazeera
 
 # ARE YOU EVEN SERIOUS TYLER, FILE WIDE DATABASE CONNECTION?
-# Yes. So serious.
+# Yes. So serious. #TODO: something better.
 client = MongoClient()
 mongo_db = client['exposure']
 mongo_collection = mongo_db['articles']
 
 
 def fetch_and_save():
+    '''
+    First, ask NewsAPI for all of it's current sources, then for each source
+    ask NewsAPI for the most recent news from that source. Once we have the
+    individual articles query reddit for the subreddits on which the article
+    has been shared. Finally, persist ALL the article information into mongodb
+    '''
     all_articles = []
 
     sources = fetch_news_api_sources()
@@ -28,16 +34,22 @@ def fetch_and_save():
 
 
 def add_aljazeera_article_text():
+    '''
+    Query mongodb for all the articles hosted on www.aljazeera.com/ and apply the specific
+    scraping adapter to fetch and store the full text of the document.
+    '''
     alj_articles = mongo_collection.find({'source': {'$regex': '.*www.aljazeera.com/.*'}})
     for a in alj_articles:
         if not a.get('full_text'):
-            text = aljazeera.fetch_and_extract_article_body(a['source'])
-            print text
-            mongo_collection.update_one({'_id': a['_id']}, {
-                '$set': {
-                    'full_text': text
-                }
-            })
+            try:
+                text = aljazeera.fetch_and_extract_article_body(a['source'])
+                mongo_collection.update_one({'_id': a['_id']}, {
+                    '$set': {
+                        'full_text': text
+                    }
+                })
+            except Exception as e:
+                print 'Warning, failure for document {}: {}'.format(a, e)
 
 
 if __name__ == "__main__":

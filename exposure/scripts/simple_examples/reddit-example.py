@@ -1,6 +1,9 @@
+'''
+An example of querying from reddit to get all the subreddits on which
+some other website or URL was shared. In this case the image hosted at: https://i.imgur.com/R7R2jfZ.gifv
+'''
 import requests
 from models.article_share import ArticleShare
-
 
 url = "http://www.reddit.com/search.json?q=https://i.imgur.com/R7R2jfZ.gifv"
 search_data = requests.get(url, headers={'User-agent': 'Exposure Bot 0.0.1'}).json()
