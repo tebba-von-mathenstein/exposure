@@ -1,10 +1,12 @@
 from pymongo import MongoClient
 from exposure.scripts.utility_belt import fetch_news_api_sources, poll_news_api, find_reddit_shares
 
-# TODO: this is going to get out of hand... we need to think of a better strategy
-from exposure.adapters import aljazeera
-from exposure.adapters import time
-from exposure.adapters import nytimes
+# TODO: this is going to get out of hand... we need to think of a better strategy for importing all these...
+from exposure.scrapers.aljazeera import AljazeeraScraper
+from exposure.scrapers.nytimes import NYTimesScraper
+from exposure.scrapers.reuters import ReutersScraper
+from exposure.scrapers.time import TimeMagazineScraper
+
 
 def fetch_and_save():
     '''
@@ -24,6 +26,7 @@ def fetch_and_save():
         articles = poll_news_api(source, 'top')
 
         for a in articles:
+            print "Fetching reddit shares for article: {}".format(a.title)
             all_articles.append(a)
             shares = find_reddit_shares(a)
 
@@ -41,15 +44,17 @@ def add_full_text():
     mongo_collection = mongo_db['articles']
 
     scrapper_map = {
-        r'.*aljazeera.com/.*': aljazeera,
-        r'.*time.com/.*': time,
-        r'.*nytimes.com/.*': nytimes
+        r'.*aljazeera.com/.*': AljazeeraScraper,
+        r'.*nytimes.com/.*': NYTimesScraper,
+        r'.*reuters.com/.*': ReutersScraper,
+        r'.*time.com/.*': TimeMagazineScraper
     }
 
     for regex, scrapper in scrapper_map.iteritems():
-        alj_articles = mongo_collection.find({'source': {'$regex': regex}})
-        for a in alj_articles:
+        articles = mongo_collection.find({'source': {'$regex': regex}})
+        for a in articles:
             if not a.get('full_text'):
+                print "Fetching full text for {}".format(a['source'])
                 try:
                     text = scrapper.fetch_and_extract_article_body(a['source'])
                     mongo_collection.update_one({'_id': a['_id']}, {
@@ -58,10 +63,10 @@ def add_full_text():
                         }
                     })
                 except Exception as e:
-                    print 'Warning, failure for document {}: {}'.format(a, e)
+                    print 'Warning, failure for document {}: {}'.format(a.source, e)
     client.close()
 
 
 if __name__ == "__main__":
-    fetch_and_save()
+    # fetch_and_save()
     add_full_text()
