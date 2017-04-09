@@ -1,4 +1,4 @@
-class ArticleShare:
+class ArticleShare(object):
     """A instance of an article being shared on a Social Media site"""
 
     def __init__(self, share_url, share_rating):

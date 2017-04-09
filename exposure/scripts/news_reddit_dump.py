@@ -7,6 +7,8 @@ from exposure.scrapers.nytimes import NYTimesScraper
 from exposure.scrapers.reuters import ReutersScraper
 from exposure.scrapers.time import TimeMagazineScraper
 
+from exposure.models.article import article_from_mongo
+
 
 def fetch_and_save():
     '''
@@ -23,18 +25,31 @@ def fetch_and_save():
 
     sources = fetch_news_api_sources()
     for source in sources:
-        articles = poll_news_api(source, 'top')
-
-        for a in articles:
-            print "Fetching reddit shares for article: {}".format(a.title)
-            all_articles.append(a)
-            shares = find_reddit_shares(a)
-
-            for s in shares:
-                a.add_share(s)
+        print "fetching articles for source: {}".format(source)
+        all_articles += poll_news_api(source, 'top')
 
     storage_articles = [a.to_mongo() for a in all_articles]
     mongo_collection.insert_many(storage_articles)
+    client.close()
+
+
+def add_reddit_shares():
+    client = MongoClient()
+    mongo_db = client['exposure']
+    mongo_collection = mongo_db['articles']
+    articles = mongo_collection.find()
+
+    for a_dict in articles:
+        a = article_from_mongo(a_dict)
+        print u"Fetching reddit shares for article: {}".format(a.url)
+        shares = find_reddit_shares(a)
+        print "  Shares were: {}".format(shares)
+
+        for s in shares:
+            a.add_share(s)
+
+        mongo_collection.replace_one({'_id': a_dict['_id']}, a.to_mongo())
+
     client.close()
 
 
@@ -51,22 +66,23 @@ def add_full_text():
     }
 
     for regex, scrapper in scrapper_map.iteritems():
-        articles = mongo_collection.find({'source': {'$regex': regex}})
+        articles = mongo_collection.find({'url': {'$regex': regex}})
         for a in articles:
             if not a.get('full_text'):
-                print "Fetching full text for {}".format(a['source'])
+                print u"Fetching full text for {}".format(a['url'])
                 try:
-                    text = scrapper.fetch_and_extract_article_body(a['source'])
+                    text = scrapper.fetch_and_extract_article_body(a['url'])
                     mongo_collection.update_one({'_id': a['_id']}, {
                         '$set': {
                             'full_text': text
                         }
                     })
                 except Exception as e:
-                    print 'Warning, failure for document {}: {}'.format(a.source, e)
+                    print 'Warning, failure for document {}: {}'.format(a['url'], e)
     client.close()
 
 
 if __name__ == "__main__":
-    # fetch_and_save()
+    fetch_and_save()
+    # add_reddit_shares()
     add_full_text()

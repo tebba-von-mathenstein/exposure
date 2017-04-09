@@ -15,5 +15,5 @@ for post in data['articles']:
         post[k] = post[k].encode('utf-8')
 
     # news-api doesn't give full text
-    a = Article(post['author'], post['title'], post['url'], post['description'], post['publishedAt'], None)
+    a = Article(post['author'], post['title'], 'techcruch', post['url'], post['description'], post['publishedAt'], None)
     print a

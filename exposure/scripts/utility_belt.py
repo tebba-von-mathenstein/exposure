@@ -45,6 +45,7 @@ def poll_news_api(source, sort_by):
         article = Article(
             article_dict['author'],
             article_dict['title'],
+            source,
             article_dict['url'],
             article_dict['description'],
             article_dict['publishedAt'],
@@ -63,10 +64,10 @@ def find_reddit_shares(article):
     '''
     article_shares = []
 
-    url = "http://www.reddit.com/search.json?q={0}".format(article.source)
+    url = "http://www.reddit.com/search.json?q={0}".format(article.url)
     search_data = requests.get(url, headers={'User-agent': 'Exposure Bot 0.0.1'}).json()
 
-    if not isinstance(search_data, dict):
+    if not isinstance(search_data, dict) or not search_data.get('data'):
         return article_shares
 
     for post in search_data['data']['children']:

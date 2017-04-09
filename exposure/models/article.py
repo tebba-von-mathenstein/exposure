@@ -1,20 +1,13 @@
-class Article:
+from exposure.models.article_share import ArticleShare
+
+class Article(object):
     """Articles are a single source of news information"""
 
-    # TODO: I Hate this formatting for __str__, is there a better way?
-    article_format_str = """
-=====================
-Author: {author}
-Date: {publish_date}
-Source: {source}
-Title: {title}
-Description: {description}
-"""
-
-    def __init__(self, author, title, source, description, publish_date, full_text):
+    def __init__(self, author, title, source, url, description, publish_date, full_text):
         self.author = author
         self.title = title
         self.source = source
+        self.url = url
         self.description = description
         self.publish_date = publish_date
         self.full_text = full_text
@@ -22,13 +15,24 @@ Description: {description}
         self.shares = []
 
     def __str__(self):
-        return Article.article_format_str.format(
+        article_format_str = """
+        =====================
+        Author: {author}
+        Date: {publish_date}
+        Source: {source}
+        URL: {url}
+        Title: {title}
+        Description: {description}
+        """
+        return article_format_str.format(
             author = self.author,
             title = self.title,
             source = self.source,
+            url = self.url,
             description = self.description,
             publish_date = self.publish_date,
-            full_text = self.full_text)
+            full_text = self.full_text
+        )
 
     def avg_share_score(self):
         '''
@@ -43,6 +47,7 @@ Description: {description}
     def add_share(self, article_share):
         self.shares.append(article_share)
 
+
     def to_mongo(self):
         '''
             Serialize the article to a dictionary format that plays nicely with MongoDB
@@ -52,3 +57,21 @@ Description: {description}
         d['shares'] = mongo_shares
 
         return d
+
+
+def article_from_mongo(mongo_dict):
+    a = Article(
+        mongo_dict['author'],
+        mongo_dict['title'],
+        mongo_dict['source'],
+        mongo_dict['url'],
+        mongo_dict['description'],
+        mongo_dict['publish_date'],
+        mongo_dict['full_text']
+    )
+
+    if mongo_dict.get('shares'):
+        for s in mongo_dict.get('shares'):
+            a.add_share(ArticleShare(s['share_url'], s['share_rating']))
+
+    return a
