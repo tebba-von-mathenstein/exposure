@@ -14,26 +14,6 @@ class Article(object):
 
         self.shares = []
 
-    def __str__(self):
-        article_format_str = """
-        =====================
-        Author: {author}
-        Date: {publish_date}
-        Source: {source}
-        URL: {url}
-        Title: {title}
-        Description: {description}
-        """
-        return article_format_str.format(
-            author = self.author,
-            title = self.title,
-            source = self.source,
-            url = self.url,
-            description = self.description,
-            publish_date = self.publish_date,
-            full_text = self.full_text
-        )
-
     def avg_share_score(self):
         '''
             Compute and return the average of the scores for social media shares.
