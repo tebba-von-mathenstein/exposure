@@ -2,9 +2,9 @@ from bs4 import BeautifulSoup
 from exposure.scrapers.scraper import Scraper
 
 
-class ReutersScraper(Scraper):
+class BreitbartScraper(Scraper):
     '''
-    Implements the _extract_article_body_text for content on Reuters.com
+    Implements the _extract_article_body_text for content on nytimes.com
     '''
     @classmethod
     def _extract_article_body_text(cls, site_html):
@@ -13,6 +13,9 @@ class ReutersScraper(Scraper):
             article text and return that text as a string.
         '''
         soup = BeautifulSoup(site_html, 'html.parser')
-        main_body = soup.select('#article-text')[0]  # Reuters wraps the main body in this tag
-        a_text = main_body.text
+
+        # breitbart wraps the main body in a div with this class, but uses p's for the text
+        individual_p_tags = soup.select('article.the-article p')
+        texts = [tag.text for tag in individual_p_tags]
+        a_text = '\n'.join(texts)
         return a_text

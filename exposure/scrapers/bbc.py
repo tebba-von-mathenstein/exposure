@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from exposure.scrapers.scraper import Scraper
 
 
-class NYTimesScraper(Scraper):
+class BBCScraper(Scraper):
     '''
     Implements the _extract_article_body_text for content on nytimes.com
     '''
@@ -13,7 +13,9 @@ class NYTimesScraper(Scraper):
             article text and return that text as a string.
         '''
         soup = BeautifulSoup(site_html, 'html.parser')
-        individual_p_tags = soup.select('.story-body-text')  # NYTimes seems to give all the p's this class
+
+        # BBC wraps the main body in a div with this class, but uses p's for the text
+        individual_p_tags = soup.select('.story-body p')
         texts = [tag.text for tag in individual_p_tags]
         a_text = '\n'.join(texts)
         return a_text

@@ -6,6 +6,8 @@ from exposure.scrapers.aljazeera import AljazeeraScraper
 from exposure.scrapers.nytimes import NYTimesScraper
 from exposure.scrapers.reuters import ReutersScraper
 from exposure.scrapers.time import TimeMagazineScraper
+from exposure.scrapers.bbc import BBCScraper
+from exposure.scrapers.breitbart import BreitbartScraper
 
 from exposure.models.article import article_from_mongo
 
@@ -62,7 +64,9 @@ def add_full_text():
         r'.*aljazeera.com/.*': AljazeeraScraper,
         r'.*nytimes.com/.*': NYTimesScraper,
         r'.*reuters.com/.*': ReutersScraper,
-        r'.*time.com/.*': TimeMagazineScraper
+        r'.*time.com/.*': TimeMagazineScraper,
+        r'.*bbc.co.*': BBCScraper,
+        r'.*breitbart.com.*': BreitbartScraper
     }
 
     for regex, scrapper in scrapper_map.iteritems():
@@ -83,6 +87,6 @@ def add_full_text():
 
 
 if __name__ == "__main__":
-    fetch_and_save()
+    # fetch_and_save()
     # add_reddit_shares()
     add_full_text()

@@ -12,8 +12,6 @@ class ReutersScraper(Scraper):
             Given the HTML for an article on this adapters main host, extract just the
             article text and return that text as a string.
         '''
-        # document.querySelector('#article-text').textContent
-
         soup = BeautifulSoup(site_html, 'html.parser')
         main_body = soup.select('#article-text')[0]  # Reuters wraps the main body in this tag
         a_text = main_body.text
