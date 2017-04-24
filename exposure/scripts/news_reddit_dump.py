@@ -8,6 +8,7 @@ from exposure.scrapers.reuters import ReutersScraper
 from exposure.scrapers.time import TimeMagazineScraper
 from exposure.scrapers.bbc import BBCScraper
 from exposure.scrapers.breitbart import BreitbartScraper
+from exposure.scrapers.cnn import CNNScraper
 
 from exposure.models.article import article_from_mongo
 
@@ -66,7 +67,8 @@ def add_full_text():
         r'.*reuters.com/.*': ReutersScraper,
         r'.*time.com/.*': TimeMagazineScraper,
         r'.*bbc.co.*': BBCScraper,
-        r'.*breitbart.com.*': BreitbartScraper
+        r'.*breitbart.com.*': BreitbartScraper,
+        r'.*cnn.com.*': CNNScraper
     }
 
     for regex, scrapper in scrapper_map.iteritems():
